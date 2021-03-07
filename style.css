@@ -1,0 +1,30 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.game-container {
+  width: 50%;
+  height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: absolute;
+  right: 50vh;
+}
+
+.card {
+  height: 30%;
+  border: 1px solid black;
+  width: calc(100% * (1 / 4) - 10px - 1px);
+}
+
+.selected {
+  border: 2px solid red;
+}
+
+.disabled {
+  pointer-events: none;
+}
