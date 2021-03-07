@@ -44,22 +44,29 @@ function cardClick(e) {
   } else {
     console.log(compareCards(e.target));
     if (compareCards(e.target)) {
+      // a match
       e.target.removeEventListener("click", cardClick);
       e.target.style.backgroundColor = cardToColorObj[e.target.id];
       console.log(cardToColorObj[e.target.id]);
       selectedCard.removeEventListener("click", cardClick);
       selectedCard.style.backgroundColor = cardToColorObj[e.target.id];
-      //   selectedCard.classList.remove("selected", "disabled");
+      selectedCard.classList.remove("selected", "disabled");
+      selectedCard = null;
     } else {
+      // not a match
       counterEl.textContent = Number(counterEl.textContent) + 1;
       cards.forEach((card) => card.classList.add("disabled"));
-      //   selectedCard.classList.remove("selected");
+      selectedCard.classList.remove("selected");
+      selectedCard.style.backgroundColor = cardToColorObj[selectedCard.id];
+      e.target.style.backgroundColor = cardToColorObj[e.target.id];
       setTimeout(() => {
         cards.forEach((card) => card.classList.remove("disabled"));
+        selectedCard.style.backgroundColor = "";
+        e.target.style.backgroundColor = "";
+        selectedCard = null;
       }, 1000);
     }
-    selectedCard.classList.remove("selected", "disabled"); // to remove
-    selectedCard = null;
+    // selectedCard.classList.remove("selected", "disabled"); // to remove
   }
 }
 
