@@ -14,26 +14,28 @@ const colors = [
   "black",
 ];
 let selectedCard = null;
-const cardToColorObj = {};
+let cardToColorObj = {};
 const counterEl = document.querySelector(".counter");
+let pairsLeft = NUM_OF_CARDS / 2;
+const gameContainer = document.querySelector(".game-container");
+let cards;
 
 const generateCards = () => {
   for (let i = 0; i < NUM_OF_CARDS; ++i) {
     const card = document.createElement("div");
     card.className = "card";
     card.id = `${i + 1}`;
-    document.querySelector(".game-container").appendChild(card);
+    gameContainer.appendChild(card);
   }
 };
 
 const randomizeCardsColors = () => {
+  let tempColors = new Array(...colors);
   let randColorNumberIndex;
   cards.forEach((card) => {
-    randColorNumberIndex = Math.floor(Math.random() * colors.length);
-    console.log(randColorNumberIndex);
-    // card.setAttribute("data-color", colors[randColorNumberIndex]);
-    cardToColorObj[card.id] = colors[randColorNumberIndex];
-    colors.splice(randColorNumberIndex, 1);
+    randColorNumberIndex = Math.floor(Math.random() * tempColors.length);
+    cardToColorObj[card.id] = tempColors[randColorNumberIndex];
+    tempColors.splice(randColorNumberIndex, 1);
   });
 };
 
@@ -41,17 +43,17 @@ function cardClick(e) {
   if (!selectedCard) {
     selectedCard = e.target;
     selectedCard.classList.add("selected", "disabled");
+    selectedCard.style.backgroundColor = cardToColorObj[e.target.id];
   } else {
-    console.log(compareCards(e.target));
     if (compareCards(e.target)) {
       // a match
       e.target.removeEventListener("click", cardClick);
       e.target.style.backgroundColor = cardToColorObj[e.target.id];
-      console.log(cardToColorObj[e.target.id]);
       selectedCard.removeEventListener("click", cardClick);
-      selectedCard.style.backgroundColor = cardToColorObj[e.target.id];
       selectedCard.classList.remove("selected", "disabled");
       selectedCard = null;
+      pairsLeft--;
+      checkWin();
     } else {
       // not a match
       counterEl.textContent = Number(counterEl.textContent) + 1;
@@ -66,7 +68,6 @@ function cardClick(e) {
         selectedCard = null;
       }, 1000);
     }
-    // selectedCard.classList.remove("selected", "disabled"); // to remove
   }
 }
 
@@ -74,11 +75,42 @@ const handleClicks = () => {
   cards.forEach((c) => c.addEventListener("click", cardClick));
 };
 
-generateCards();
-const cards = document.querySelectorAll(".card");
-randomizeCardsColors();
-handleClicks();
+const startGame = () => {
+  generateCards();
+  cards = document.querySelectorAll(".card");
+  randomizeCardsColors();
+  handleClicks();
+};
+
+// STARTING POINT!
+startGame();
 
 const compareCards = (card) => {
   return cardToColorObj[card.id] === cardToColorObj[selectedCard.id];
+};
+
+const restartGame = () => {
+  cardToColorObj = {};
+  pairsLeft = NUM_OF_CARDS / 2;
+  counterEl.textContent = 0;
+  clearContainer();
+  startGame();
+};
+
+const checkWin = () => {
+  if (!pairsLeft) {
+    youWonMsg = document.createElement("h1");
+    youWonMsg.textContent = "You Won!!";
+    gameContainer.appendChild(youWonMsg);
+    restartGameButton = document.createElement("button");
+    restartGameButton.textContent = "Restart Game";
+    gameContainer.appendChild(restartGameButton);
+    restartGameButton.addEventListener("click", restartGame);
+  }
+};
+
+const clearContainer = () => {
+  while (gameContainer.hasChildNodes()) {
+    gameContainer.firstChild.remove();
+  }
 };
