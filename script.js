@@ -80,10 +80,8 @@ const startGame = () => {
   cards = document.querySelectorAll(".card");
   randomizeCardsColors();
   handleClicks();
+  timerReset();
 };
-
-// STARTING POINT!
-startGame();
 
 const compareCards = (card) => {
   return cardToColorObj[card.id] === cardToColorObj[selectedCard.id];
@@ -106,6 +104,7 @@ const checkWin = () => {
     restartGameButton.textContent = "Restart Game";
     gameContainer.appendChild(restartGameButton);
     restartGameButton.addEventListener("click", restartGame);
+    clearInterval(timer);
   }
 };
 
@@ -114,3 +113,28 @@ const clearContainer = () => {
     gameContainer.firstChild.remove();
   }
 };
+
+// Timer
+let timer;
+let seconds, minutes, hours;
+const timerEl = document.querySelector(".timer");
+const tick = () => {
+  minutes += parseInt(seconds / 60);
+  hours += parseInt(minutes / 60);
+  seconds = seconds === 60 ? 0 : seconds;
+  minutes = minutes === 60 ? 0 : minutes;
+  secondsDisplay = seconds < 10 ? "0" + seconds : seconds;
+  minutesDisplay = minutes < 10 ? "0" + minutes : minutes;
+  hoursDisplay = hours < 10 ? "0" + hours : hours;
+  timerEl.textContent = `${hoursDisplay}:${minutesDisplay}:${secondsDisplay}`;
+  seconds++;
+};
+
+const timerReset = () => {
+  seconds = minutes = hours = 0;
+  tick();
+  timer = setInterval(tick, 1000);
+};
+
+// STARTING POINT!
+startGame();
